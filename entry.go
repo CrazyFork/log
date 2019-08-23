@@ -54,6 +54,7 @@ func (e *Entry) WithField(key string, value interface{}) *Entry {
 func (e *Entry) WithError(err error) *Entry {
 	ctx := e.WithField("error", err.Error())
 
+  // runtime type assertion
 	if s, ok := err.(stackTracer); ok {
 		frame := s.StackTrace()[0]
 

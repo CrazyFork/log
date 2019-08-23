@@ -135,6 +135,7 @@ func (h *Handler) render(e *log.Entry, done bool) {
 	level := Strings[e.Level]
 	names := e.Fields.Names()
 
+  // \r, keep cursor under this line
 	// delta and spinner
 	if done {
 		fmt.Fprintf(h.w, "\r     %-7s", time.Since(h.start).Round(time.Millisecond))
