@@ -1,0 +1,72 @@
+
+# Notes
+
+-> 目标
+* 如何实现一个logger, 
+
+就tj第一版(initial commit)的实现来看, 比我预想中的要简单. 可能唯一需要注意的就是 io 在做
+output 的时候注意加锁.
+
+-> key component
+
+* Fields
+* Entry
+* Logger
+* Handler
+
+
+* Entry, a log item entry. 
+  ```go
+  try represents a single log entry.
+  type Entry struct {
+    Logger    *Logger   `json:"-"`
+    Fields    Fields    `json:"fields"`
+    Level     Level     `json:"level"`
+    Timestamp time.Time `json:"timestamp"`
+    Message   string    `json:"message"`
+  }
+  ```
+
+* Fields, a Entry has many fields, `type Fields Map<String, any>` 
+
+* Level, log level
+
+* Handler, `type Handler = F(Entry)=>error`
+
+-> 
+
+* Trace, field 有complete字段, type boolean, [ true, false ]
+* pkg.go, 里边声明了一个全局的logger,  
+
+
+-> Notes 
+
+
+
+-> 
+
+// go interface 是松散型的, 意味着你实现如下方法就行
+type Handler interface {
+	HandleLog(*Entry) error
+}
+
+
+// assert interface compliance.
+var _ Interface = (*Logger)(nil)
+
+
+-> 
+func (e *Entry) WithFields(fields Fielder) *Entry {
+	f := Fields{}
+
+	for k, v := range e.Fields {
+		f[k] = v
+	}
+
+	for k, v := range fields.Fields() {
+		f[k] = v
+	}
+
+// create new Entry
+	return &Entry{Logger: e.Logger, Fields: f}
+}
